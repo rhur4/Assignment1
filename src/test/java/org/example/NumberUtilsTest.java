@@ -196,5 +196,18 @@ class NumberUtilsTest {
         assertThrows(IllegalArgumentException.class, () -> add(List.of(-2), List.of(4)));
     }
 
+    @Test
+    @Tag("Mutation")
+    void digitResetToZeroCheck() {
+        assertThat(add(List.of(5), List.of(4))).isEqualTo(List.of(9));
+        assertThat(NumberUtils.resetDigit).isEqualTo(false);
+    }
+
+    @Test
+    @Tag("Mutation")
+    void digitCarryOverCheck() {
+        assertThat(add(List.of(5), List.of(4))).isEqualTo(List.of(9));
+        assertThat(NumberUtils.carriedOver).isEqualTo(false);
+    }
 
 }

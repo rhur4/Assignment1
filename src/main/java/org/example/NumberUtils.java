@@ -6,6 +6,11 @@ import java.util.List;
 
 public class NumberUtils {
 
+    // modification: keep track of when digit was reset (i = either size) to catch for-loop mutation
+    public static boolean resetDigit;
+    // modification: keep track that a digit was carried to catch carry mutation
+    public static boolean carriedOver;
+
     /**
      * This method receives two numbers, `left` and `right`, both represented as a list of digits.
      * It adds these numbers and returns the result also as a list of digits.
@@ -24,6 +29,10 @@ public class NumberUtils {
      * @return the sum of left and right, as a list
      */
     public static List<Integer> add(List<Integer> left, List<Integer> right) {
+        // reset upon each call to add()
+        resetDigit = false;
+        carriedOver = false;
+
         // if any is null, return null
         if (left == null || right == null)
             return null;
@@ -39,8 +48,22 @@ public class NumberUtils {
         int carry = 0;
         for (int i = 0; i < Math.max(left.size(), right.size()); i++) {
 
-            int leftDigit = left.size() > i ? left.get(i) : 0;
-            int rightDigit = right.size() > i ? right.get(i) : 0;
+            int leftDigit = 0;
+            int rightDigit = 0;
+
+            if (left.size() > i) {
+                leftDigit = left.get(i);
+            } else {
+                resetDigit = true;
+            }
+            if (right.size() > i) {
+                rightDigit = right.get(i);
+            } else {
+                resetDigit = true;
+            }
+
+            // int leftDigit = left.size() > i ? left.get(i) : 0;
+            // int rightDigit = right.size() > i ? right.get(i) : 0;
 
             if (leftDigit < 0 || leftDigit > 9 || rightDigit < 0 || rightDigit > 9)
                 throw new IllegalArgumentException();
@@ -52,8 +75,10 @@ public class NumberUtils {
         }
 
         // if there's some leftover carry, add it to the final number
-        if (carry > 0)
+        if (carry > 0) {
             result.addFirst(carry);
+            carriedOver = true;
+        }
 
         // remove leading zeroes from the result
         while (result.size() > 1 && result.get(0) == 0)
